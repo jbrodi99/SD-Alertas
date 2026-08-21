@@ -1,0 +1,202 @@
+Prerequisitos — Lab OpenTofu sobre GCP · SD 2026
+Universidad Nacional de Luján
+Departamento de Ciencias Básicas
+Sistemas Distribuidos · Lab OpenTofu sobre GCP
+2026
+Dr. David Petrocelli
+Inicio
+/
+Lab OpenTofu · GCP
+/
+Prerequisitos
+Prerequisitos
+Lab OpenTofu sobre Google Cloud · 2026.
+Lo que necesitás en tu máquina para desplegar los labs
+00-bootstrap
+a
+06-gke-standard-app
+.
+Una sola configuración inicial — después cada lab corre con
+tofu init && tofu apply
+.
+Herramientas locales
+Verificá que cada herramienta esté instalada y en una versión compatible.
+Herramienta
+Versión mínima
+Verificar
+OpenTofu
+≥ 1.6
+tofu version
+gcloud SDK
+cualquiera reciente
+gcloud version
+kubectl
+(labs 05–06)
+≥ 1.27
+kubectl version --client
+git
+cualquiera
+git --version
+Instalar OpenTofu (Linux)
+curl -fsSL https://get.opentofu.org/install-opentofu.sh -o install.sh
+chmod +x install.sh
+./install.sh --install-method standalone
+Más detalles en
+opentofu.org/docs/intro/install
+.
+Cuenta de Google Cloud
+Cuenta de GCP con
+billing habilitado
+.
+Un
+proyecto
+creado donde tengas rol
+Owner
+o
+Editor
+.
+Idealmente, créditos del free tier o una alerta de budget configurada.
+⚠ Atención costos.
+GKE Autopilot (lab 05) factura por hora aunque no haya cargas.
+Siempre correr
+tofu destroy
+al terminar cada lab.
+Autenticación
+Tenés dos caminos. Para los alumnos del curso, usar la
+opción A
+(SA key JSON
+que provee la cátedra). La
+opción B
+(ADC con tu propia cuenta) es para quien
+quiera levantar todo en un proyecto GCP propio.
+Opción A — SA key JSON (recomendado para alumnos)
+La cátedra distribuye un archivo
+sd2026-students-key.json
+por canal cerrado
+(Discord/aula virtual). Es una service account con todos los permisos que el lab necesita,
+apuntando al proyecto compartido del curso.
+# 1) Guardar el JSON en cualquier path local (no committearlo a git)
+export GOOGLE_APPLICATION_CREDENTIALS=/path/a/sd2026-students-key.json
+# 2) Verificar / activar
+gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+gcloud config set project project-2d4443a6-8e9c-4216-862
+# 3) OpenTofu ahora lee el JSON automáticamente vía GOOGLE_APPLICATION_CREDENTIALS
+cd 01-vm-basica
+tofu init && tofu plan
+⚠ Reglas con el JSON
+Nunca
+committearlo a un repo (público ni privado). Agregalo al
+.gitignore
+.
+Nunca
+compartirlo fuera del grupo del curso.
+Si sospechás que se filtró, avisar a la cátedra para revocar la key.
+El proyecto tiene budget cap — si revientan el límite, se apaga el billing y nadie puede seguir.
+Opción B — Application Default Credentials (proyecto propio)
+Si vas a usar tu propio proyecto GCP en lugar del compartido:
+# Login interactivo (usado por gcloud)
+gcloud auth login
+gcloud config set project <TU_PROJECT_ID>
+# Application Default Credentials (usado por OpenTofu)
+gcloud auth application-default login
+gcloud auth application-default set-quota-project <TU_PROJECT_ID>
+Importante:
+el provider de Google en OpenTofu lee
+~/.config/gcloud/application_default_credentials.json
+,
+no
+las credenciales
+de
+gcloud auth login
+. Son dos cosas distintas — necesitás las dos.
+Permisos IAM en el proyecto
+Tu usuario (o la service account que uses) necesita estos roles:
+Rol
+Para qué
+roles/serviceusage.serviceUsageAdmin
+Habilitar APIs (lab 00)
+roles/storage.admin
+Bucket de estado remoto (lab 00)
+roles/compute.admin
+VMs, redes, LBs (labs 01–04)
+roles/container.admin
+Clusters GKE (labs 05–06)
+roles/iam.serviceAccountUser
+Adjuntar SAs a VMs y GKE
+APIs a habilitar
+El lab
+00-bootstrap
+las habilita declarativamente. Para hacerlo manual:
+gcloud services enable \
+compute.googleapis.com \
+container.googleapis.com \
+iam.googleapis.com \
+storage.googleapis.com \
+serviceusage.googleapis.com
+Configuración recomendada
+REGIÓN
+us-central1
+Más barata y cerca del free tier de GCP. Toda la práctica está pensada para esta región.
+Variable:
+region
+MÁQUINA
+e2-micro
+Tipo de instancia cubierto por el free tier para mantener los labs 01–04 sin costo significativo.
+Variable:
+machine_type
+Checklist final antes de empezar
+Todos estos comandos deben funcionar antes de pasar a los
+pasos a seguir
+:
+Verificación
+Comando
+OpenTofu instalado
+tofu version
+≥ 1.6
+gcloud autenticado
+gcloud auth list
+muestra ACTIVE
+ADC presentes
+ls ~/.config/gcloud/application_default_credentials.json
+Proyecto seteado
+gcloud config get-value project
+Proyecto accesible
+gcloud projects describe $(gcloud config get-value project)
+Roles IAM correctos
+Owner/Editor o los listados arriba
+Billing habilitado
+gcloud beta billing projects describe <ID>
+Troubleshooting rápido
+Error
+Causa probable
+Solución
+could not find default credentials
+Falta ADC
+gcloud auth application-default login
+API [...] not enabled
+API deshabilitada
+Correr
+00-bootstrap
+o
+gcloud services enable
+Permission denied
+Falta rol IAM
+Pedir al Owner que agregue los roles de la sección de permisos
+quota project ... is invalid
+Quota project mal configurado
+gcloud auth application-default set-quota-project <ID>
+bucket already exists
+Nombre de bucket global ya tomado
+Cambiar
+state_bucket_name
+en
+terraform.tfvars
+←
+Volver
+Inicio
+Siguiente
+Pasos a seguir
+→
+UNLu · Departamento de Ciencias Básicas · Sistemas Distribuidos y Programación Paralela
+2026
+· Dr. David Petrocelli

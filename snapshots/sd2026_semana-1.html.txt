@@ -1,0 +1,175 @@
+Semana 1 — Setup, lectura y foro (Mercedes 2C 2026) — UNLu
+DCB
+Universidad Nacional de Luján
+Departamento de Ciencias Básicas
+Sistemas Distribuidos y Programación Paralela
+2026
+Dr. David Petrocelli
+☾
+☀
+Oscuro
+Claro
+☰
+Contenidos
+×
+Semana 1: qué
+hacer entre hoy y el viernes 21/8
+A.
+Antes del viernes 21/8: setup, grupos y primer contacto con el
+TP1
+B. Lectura recomendada
+(Unidad 1)
+C.
+Foro semana 1: ¿qué es (y qué no es) un sistema
+distribuido?
+← Volver al índice
+SEMANA
+1
+📑 Índice del documento
+Semana 1:
+qué hacer entre hoy y el viernes 21/8
+A.
+Antes del viernes 21/8: setup, grupos y primer contacto con el
+TP1
+B. Lectura recomendada
+(Unidad 1)
+C.
+Foro semana 1: ¿qué es (y qué no es) un sistema
+distribuido?
+Expandir todo
+Colapsar todo
+Semana 1: qué
+hacer entre hoy y el viernes 21/8
+Comisión Mercedes, 2C 2026. Esta página junta las tareas previas a la
+primera clase en vivo, la lectura recomendada de la Unidad 1 y las
+preguntas del foro de la semana.
+A.
+Antes del viernes 21/8: setup, grupos y primer contacto con el TP1
+Hola a todos. Ya están subidas las presentaciones de las clases 1 a
+3. Para que el viernes (clase en vivo) arranquemos directo con Git,
+GitHub Actions y sockets TCP, necesito que lleguen con esto
+resuelto:
+1. Entorno instalado y verificado
+(30 a 60
+minutos)
+Herramienta
+Cómo verificar
+Git
+git --version
+Cuenta de GitHub + invitación a la org
+unlu-sd2026
+aceptada
+entrar a
+https://github.com/unlu-sd2026
+y ver los repos
+Python 3.12 (o Java 17 si van por Spring Boot)
+python3 --version
+/
+java -version
+Docker funcionando
+docker run hello-world
+VS Code (o el editor que usen)
+abrir una carpeta y una terminal integrada
+Windows: WSL2 con Ubuntu
+wsl -l -v
+muestra VERSION 2
+Si algo no anda, escriban en el foro de dudas con el error completo
+(texto, no captura) y el sistema operativo. Lo resolvemos antes del
+viernes y no en clase.
+2. Grupos del TP1
+(grupal, vence 4/9) Armar el
+grupo, elegir un nombre y crear el repositorio del TP1 en GitHub con un
+README que tenga: nombre del grupo, integrantes y qué lenguaje van a
+usar. Cargar el nombre del grupo y el link del repo en la
+planilla/formulario de la cátedra. El viernes hacemos el primer commit
+con CI ahí mismo.
+3. Leer el enunciado del TP1
+(
+https://dpetrocelli.github.io/sd2026/practica-1.html
+),
+en particular Hits 1 a 4. No hay que resolver nada todavía; sí llegar
+sabiendo qué se pide y con al menos una pregunta.
+4. Leer cómo funcionan los ejercicios autocorregidos
+(
+https://dpetrocelli.github.io/sd2026/autograder.html
+).
+Es el mecanismo que van a usar todo el cuatrimestre.
+5. Opcional (calentamiento, no se entrega):
+un
+servidor TCP “echo” y un cliente en el lenguaje del grupo. Menos de 40
+líneas cada uno. El viernes partimos desde ahí; quien lo trajo hecho, va
+a entender la clase mucho más rápido.
+B. Lectura recomendada (Unidad
+1)
+Elegí material corto y que se cruce con lo que van a hacer en el
+TP1:
+Waldo, Wyant, Wollrath, Kendall. “A Note on Distributed
+Computing” (Sun Microsystems Technical Report, 1994).
+Paper
+clásico y corto (unas 15 páginas). Argumenta por qué un sistema
+distribuido no puede tratarse como un programa local “transparente”:
+latencia, acceso a memoria, concurrencia y fallas parciales. Es
+exactamente la discusión de transparencia y modelo cliente/servidor de
+la Unidad 1, y es lo que van a sufrir en carne propia cuando el servidor
+del Hit 3 se caiga y el cliente quede colgado. PDF:
+https://github.com/papers-we-love/papers-we-love/blob/main/distributed_systems/a-note-on-distributed-computing.pdf
+“Fallacies of Distributed Computing Explained”
+(Rotem-Gal-Oz), sobre las 8 falacias de Peter Deutsch.
+Whitepaper de lectura liviana. PDF:
+https://arnon.me/wp-content/uploads/Files/fallacies.pdf
+Cada falacia (“la red es confiable”, “la latencia es cero”, “la
+topología no cambia”…) aparece en algún Hit del TP1 o del TP2.
+Tanenbaum y van Steen, “Distributed Systems”, capítulo 1
+(Introducción).
+La 3ra edición se descarga gratis desde el
+sitio de los autores:
+https://www.distributed-systems.net/index.php/books/ds3/
+Es la bibliografía base de la materia; el capítulo 1 cubre definiciones,
+objetivos (transparencia, apertura, escalabilidad) y tipos de sistemas
+distribuidos.
+Birrell y Nelson, “Implementing Remote Procedure Calls”
+(Xerox PARC, ACM TOCS, 1984).
+El paper que definió cómo se
+implementa una llamada a procedimiento remoto: stubs, binding,
+transporte, y qué pasa cuando falla el cliente, el servidor o la red
+(punto 1.8 del programa). Cuando en el Hit #8 del TP1 generen los stubs
+de gRPC desde un
+.proto
+, van a estar usando exactamente la
+arquitectura que describe este paper, 40 años después. PDF:
+https://www.cs.princeton.edu/courses/archive/fall03/cs518/papers/rpc.pdf
+Sugerencia de orden: primero Waldo (es el que abre la cabeza),
+después las falacias, Birrell y Nelson cuando lleguen al Hit #8 de gRPC,
+y el capítulo 1 de Tanenbaum como referencia permanente.
+C.
+Foro semana 1: ¿qué es (y qué no es) un sistema distribuido?
+Consigna: respondé al menos una de estas preguntas con tu propia
+opinión (5 a 10 líneas, sin copiar de un LLM; quiero leer lo que pensás
+vos) y comentá la respuesta de al menos un compañero antes del martes
+25/8. La participación cuenta como actividad de la cursada.
+Waldo y otros dicen que la “transparencia” (hacer que una llamada
+remota parezca local) es un objetivo peligroso. Después de leer el
+paper, ¿estás de acuerdo? Dá un ejemplo concreto de algo que uses todos
+los días (WhatsApp, un juego online, Mercado Pago, Google Drive) donde
+esa transparencia se rompe y el usuario se da cuenta.
+Elegí una de las 8 falacias de la computación distribuida y contá
+una situación real (propia, del trabajo, o una noticia) donde alguien la
+asumió y salió mal.
+En el TP1 van a construir un cliente y un servidor que se hablan
+por sockets TCP. Si el servidor se cae en el medio de una petición, ¿qué
+debería hacer el cliente? ¿Reintentar? ¿Cuántas veces? ¿Cómo sabe si la
+operación se ejecutó o no? No hay respuesta única; me interesa el
+razonamiento.
+¿Cuál es la diferencia entre un sistema “distribuido” y un
+sistema “descentralizado”? ¿Un blockchain es lo uno, lo otro, o ambos?
+(Adelanto: el TP Integrador es una blockchain distribuida, así que esta
+pregunta les vuelve en diciembre.)
+Pregunta libre: contá qué sistema distribuido te parece más
+impresionante en cuanto a ingeniería y por qué. Vale cualquier cosa:
+DNS, BitTorrent, Netflix, Bitcoin, el sistema de reservas de una
+aerolínea.
+Como cierre, el viernes tomo 10 minutos de la clase para discutir las
+respuestas más interesantes.
+UNLu · Departamento de Ciencias Básicas · Sistemas Distribuidos y Programación Paralela
+2026
+· Dr. David Petrocelli

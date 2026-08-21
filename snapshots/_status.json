@@ -1,0 +1,54 @@
+{
+  "sd2026_index.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_semana-1.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_autograder.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_practica-1.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_practica-2.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_practica-0.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_practica-3-parte-1.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_practica-3-parte-2.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_lab-tofu-gcp-prerequisites.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_practica-4.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_lab-cuda.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_cluster-k3s.html": {
+    "failing": false,
+    "last_error": null
+  },
+  "sd2026_tp-integrador.html": {
+    "failing": false,
+    "last_error": null
+  }
+}

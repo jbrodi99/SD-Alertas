@@ -1,0 +1,471 @@
+Autograder — Guía para alumnos — UNLu DCB
+Universidad Nacional de Luján
+Departamento de Ciencias Básicas
+Sistemas Distribuidos y Programación Paralela
+2026
+Dr. David Petrocelli
+☾
+☀
+Oscuro
+Claro
+☰
+Contenidos
+×
+Autograder —
+Cronograma de actividades
+Cómo funciona — en 30
+segundos
+Dónde ver tus resultados
+Reglas
+mínimas
+Cronograma — 10
+actividades, una por semana
+Actividad 1 — entrega dom
+30/08/2026
+Actividad 2 — entrega dom
+06/09/2026
+Actividad 3 — entrega dom
+20/09/2026
+Actividad 4 — entrega dom
+27/09/2026
+Actividad 5 — entrega dom
+04/10/2026
+Actividad 6 — entrega dom
+11/10/2026
+Actividad 7 — entrega dom
+18/10/2026
+Actividad 8 — entrega dom
+25/10/2026
+Actividad 9 — entrega dom
+01/11/2026
+Actividad 10 —
+entrega dom 08/11/2026 · cierre
+Resumen del cronograma
+← Volver al índice
+AUTOGRADER
+📑 Índice del documento
+Autograder —
+Cronograma de actividades
+Cómo funciona — en 30
+segundos
+Dónde ver tus
+resultados
+Reglas
+mínimas
+Cronograma — 10
+actividades, una por semana
+Actividad 1 — entrega
+dom 30/08/2026
+Actividad 2 — entrega
+dom 06/09/2026
+Actividad 3 — entrega
+dom 20/09/2026
+Actividad 4 — entrega
+dom 27/09/2026
+Actividad 5 — entrega
+dom 04/10/2026
+Actividad 6 — entrega
+dom 11/10/2026
+Actividad 7 — entrega
+dom 18/10/2026
+Actividad 8 — entrega
+dom 25/10/2026
+Actividad 9 — entrega
+dom 01/11/2026
+Actividad 10 —
+entrega dom 08/11/2026 · cierre
+Resumen del cronograma
+Expandir todo
+Colapsar todo
+Autograder — Cronograma
+de actividades
+Corrección automática por ejercicio.
+Una actividad
+nueva por semana, con corrección instantánea. Forkeás → codeás → pusheás
+→ en ~1 min recibís ✅/❌ con el detalle. Entregas los
+domingos
+a las 23:59
+.
+Arranca el dom 30/08/2026 · cierre del
+programa: domingo 08/11/2026.
+Cómo funciona — en 30
+segundos
+Vos pusheás → Grader corre tests ocultos → ✅/❌ comentario en tu commit
+→ Planilla de Google + Discord + email si fallás
+Cada ejercicio es un
+repo de GitHub
+que vos forkeás.
+Implementás siguiendo el
+README.md
+del repo, pusheás, y un
+sistema externo corre tests ocultos sobre tu código y te devuelve
+feedback automático.
+Dónde ver tus resultados
+Canal
+Link
+Qué encontrás
+🏆
+Leaderboard público
+https://unlu-sd2026.github.io/grader/
+Ranking del curso, puntaje acumulado, ejercicios resueltos
+💬
+Comentario en tu commit
+tu fork → último commit
+Detalle del último submit: qué tests pasaron, cuáles no, por
+qué
+📊
+Planilla de Google
+(link en
+#grading
+)
+Histórico completo de submissions, deadline tracking
+🔔
+Discord
+canal
+#grading
+Notificación en tiempo real de cada corrección
+El
+leaderboard
+se actualiza automáticamente después
+de cada submit (workflow
+leaderboard.yml
+corre y publica a
+GitHub Pages). Si no ves tu nombre, esperá ~2 minutos.
+Reglas mínimas
+No tocar
+tests/
+ni
+.github/
+— solo
+src/
+,
+Dockerfile
+,
+docker-compose.yml
+,
+.env.example
+.
+Probá local antes de pushear
+— máximo 5 submissions
+por ejercicio.
+Nunca commitees
+.env
+— usá
+.env.example
+y agregá
+.env
+al
+.gitignore
+.
+Inglés
+en código, comentarios y commits.
+Tarde:
+período de gracia 3 días, marcado como
+LATE
+. Después se rechaza.
+Workflow completo (paso a paso)
+Fork
+del repo del ejercicio
+(
+https://github.com/unlu-sd2026/exercise-XX-...
+).
+Clonar
+tu fork:
+git clone https://github.com/TU_USUARIO/exercise-XX-...
+Leer el
+README.md
+— la spec completa
+está ahí.
+Implementar
+reemplazando los
+TODO
+en
+src/
+,
+Dockerfile
+,
+docker-compose.yml
+.
+Probar local:
+docker
+compose up
+--build
+-d
+curl
+http://localhost:8080/health
+pytest
+tests/
+-v
+docker
+compose down
+-v
+Push:
+git add -A && git commit -m "Implement solution" && git push
+Esperar el feedback
+(~1 min). El grader postea un
+comentario ✅/❌ en tu último commit con detalle de qué tests pasaron y
+cuáles no.
+Para ver tu nota: comentario en el commit del fork · planilla de
+Google · leaderboard en
+https://unlu-sd2026.github.io/grader/
+.
+Preguntas frecuentes
+¿Cuántas veces puedo entregar?
+Hasta 5 submissions
+por ejercicio. Cada push cuenta. Probá local antes.
+¿Puedo volver a pushear si fallé?
+Sí, mientras no
+pasaste el límite.
+Los tests locales pasan pero el grader dice que
+fallé.
+El grader corre tests ocultos adicionales (más casos
+borde + buenas prácticas Docker). Leé el comentario del commit.
+¿Puedo ver los tests ocultos?
+No, están en repo
+privado. El comentario del commit te dice qué falló y por qué.
+¿Y si pusheo después del deadline?
+Período de gracia
+de 3 días marcado como
+LATE
+. Después, rechazo.
+No tengo Docker.
+Instalá Docker Desktop (
+https://www.docker.com/products/docker-desktop/
+).
+Gratis para uso educativo.
+Cualquier duda → canal
+#grading
+en
+Discord.
+Cronograma — 10
+actividades, una por semana
+Cada actividad
+refuerza el TP
+que están viendo esa
+semana. No es carga extra — es práctica con corrección automática del
+concepto que ya están dando. La entrega es siempre
+domingo
+23:59
+.
+Actividad 1 — entrega dom
+30/08/2026
+01-node-registry
+— Registro de nodos por sockets
+Servicio que registra nodos remotos vía sockets/HTTP, con
+health-check y persistencia simple. Calentamiento — refuerza lo de
+TP 1
+(registro de contactos + cliente/servidor) ahora
+con corrección automática.
+Refuerza:
+TP 1 — Conceptos básicos de SD
+Entrega:
+Dom
+30/08/2026
+Repo:
+unlu-sd2026/exercise-01-node-registry
+Actividad 2 — entrega dom
+06/09/2026
+08-grpc
+—
+Servicio gRPC + Protobuf
+Definir un
+.proto
+, generar stubs, exponer un servicio
+gRPC con health-check y reflection.
+Refuerza:
+TP 1 (Hit #8 — gRPC + Protobuf)
+Entrega:
+Dom
+06/09/2026
+Repo:
+unlu-sd2026/exercise-08-grpc
+Semana del 08/09 — sin actividad nueva.
+Semana de
+Docker intensivo y arranque del TP 2: usalá para ponerte al día si venís
+atrasado.
+Actividad 3 — entrega dom
+20/09/2026
+09-leader-election
+— Algoritmo de Bully
+Implementar elección de líder Bully en N nodos, simular caída del
+líder y recuperación.
+Refuerza:
+TP 2 — Bully
+Entrega:
+Dom
+20/09/2026
+Repo:
+unlu-sd2026/exercise-09-leader-election
+Actividad 4 — entrega dom
+27/09/2026
+03-rabbitmq
+—
+Patrones con RabbitMQ
+Implementar producer/consumer, DLQ, retry con backoff.
+Es
+exactamente el Hit #0 del TP 3
+con corrección automática.
+Refuerza:
+TP 3 · Parte 1 (Hit #0)
+Entrega:
+Dom
+27/09/2026
+Repo:
+unlu-sd2026/exercise-03-rabbitmq
+Actividad 5 — entrega dom
+04/10/2026
+02-dashboard
+— Dashboard de estado de nodos
+API + UI mínima que muestra qué nodos están vivos, latencia, último
+heartbeat. Sirve de base para observabilidad.
+Refuerza:
+TP 2 — SD y Concurrencia
+Entrega:
+Dom
+04/10/2026
+Repo:
+unlu-sd2026/exercise-02-dashboard
+Actividad 6 — entrega dom
+11/10/2026
+04-kubernetes
+—
+Workloads en Kubernetes
+Desplegar una app real sobre el cluster: Deployment, Service,
+ConfigMap, Secret y Job, con manifiestos declarativos verificados por el
+grader.
+Refuerza:
+TP 3 · Parte 1 (Hit #1 — Sobel sobre k8s)
+y
+Parte 0
+Entrega:
+Dom
+11/10/2026
+Repo:
+unlu-sd2026/exercise-04-kubernetes
+Actividad 7 — entrega dom
+18/10/2026
+05-observability
+— Prometheus + Grafana sidecar
+Instrumentar un servicio con
+/metrics
+, scraping de
+Prometheus, dashboard de Grafana versionado en repo.
+Refuerza:
+TP 3 · Parte 2 (Hit #4 —
+observabilidad)
+Entrega:
+Dom
+18/10/2026
+Repo:
+unlu-sd2026/exercise-05-observability
+Actividad 8 — entrega dom
+25/10/2026
+06-cicd
+—
+Pipeline GitHub Actions + ghcr.io
+Workflow que buildea, testea y pushea imagen Docker a
+ghcr.io
+con tags por SHA y
+latest
+. Gate de
+gitleaks obligatorio.
+Refuerza:
+Requisitos de CI/CD del TP 3
+Entrega:
+Dom
+25/10/2026
+Repo:
+unlu-sd2026/exercise-06-cicd
+Actividad 9 — entrega dom
+01/11/2026
+07-hpa
+—
+Horizontal Pod Autoscaler
+Configurar HPA contra una métrica custom (CPU, RPS o queue depth),
+demostrar que escala bajo carga sintética.
+Refuerza:
+TP 3 · Parte 2 (Hit #3 — escalado)
+Entrega:
+Dom
+01/11/2026
+Repo:
+unlu-sd2026/exercise-07-hpa
+Actividad 10 —
+entrega dom 08/11/2026 · cierre
+10-gke
+—
+Deploy a Google Kubernetes Engine
+Provisión de GKE con Terraform, deploy del Sobel distribuido del TP
+3, health checks públicos.
+Cierre del programa de
+autograder.
+Refuerza:
+TP 3 · Parte 2 (Hit #2 — cloud)
+Entrega final:
+Domingo
+08/11/2026
+Repo:
+unlu-sd2026/exercise-10-gke
+Resumen del cronograma
+#
+Entrega
+Ejercicio
+Refuerza
+1
+Dom 30/08
+01-node-registry
+TP 1
+2
+Dom 06/09
+08-grpc
+TP 1 (Hit #8)
+—
+(semana 08/09)
+sin actividad — Docker / arranque TP 2
+—
+3
+Dom 20/09
+09-leader-election
+TP 2 — Bully
+4
+Dom 27/09
+03-rabbitmq
+TP 3 P1 Hit #0
+5
+Dom 04/10
+02-dashboard
+TP 2
+6
+Dom 11/10
+04-kubernetes
+TP 3 P1 Hit #1
+7
+Dom 18/10
+05-observability
+TP 3 P2 Hit #4
+8
+Dom 25/10
+06-cicd
+CI/CD del TP 3
+9
+Dom 01/11
+07-hpa
+TP 3 P2 Hit #3
+10
+Dom 08/11
+10-gke
+TP 3 P2 Hit #2
+—
+Dom 08/11
+Cierre del programa
+—
+Cronograma 2C 2026 (comisión Mercedes).
+Respecto del
+1C se reordenaron los ejercicios para que cada uno caiga en la semana en
+que se ve el tema, y se reincorporó
+04-kubernetes
+como
+práctica previa al Hit #1 del TP 3.
+UNLu · Departamento de Ciencias Básicas · Sistemas Distribuidos y Programación Paralela
+2026
+· Dr. David Petrocelli

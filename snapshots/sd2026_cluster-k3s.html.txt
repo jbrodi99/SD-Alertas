@@ -1,0 +1,652 @@
+Cluster K3s con GPU — Infraestructura compartida — UNLu
+DCB
+Universidad Nacional de Luján
+Departamento de Ciencias Básicas
+Sistemas Distribuidos y Programación Paralela
+2026
+Dr. David Petrocelli
+☾
+☀
+Oscuro
+Claro
+☰
+Contenidos
+×
+Cluster
+K3s con GPU — Infraestructura compartida de la cátedra
+¿Cuándo
+usarlo?
+Requisitos previos
+Instalar
+kubectl
+Linux
+macOS
+Windows (PowerShell)
+Acceso — paso a paso
+Paso 1 — Guardar el
+kubeconfig
+Paso 2 — Activar el
+kubeconfig
+Paso 3 — Verificar la
+conexión
+Paso 4 —
+Verificar que las GPUs están disponibles
+Paso 5 — Pod de prueba
+con
+nvidia-smi
+Comandos esenciales
+Desplegar y gestionar
+Debug y
+monitoreo
+Ver cuotas y namespace
+compartido
+Patrones de uso con GPU
+Patrón
+1 — Job de Kubernetes (lo que pedimos para la entrega)
+Patrón 2 — Pod
+interactivo (debugging)
+Reglas de uso
+(importantes)
+Errores comunes y
+soluciones
+error: You must be logged in to the server (Unauthorized)
+Error: pods "mi-pod" is forbidden: exceeded quota
+Error: container has runAsNonRoot
+Unable to connect to the server: dial tcp... connection refused
+Pod
+queda en
+Pending
+con
+0/N nodes available: insufficient nvidia.com/gpu
+ImagePullBackOff
+El Job termina
+pero los logs salen vacíos
+nvidia-smi: command not found
+adentro del Pod
+Comparación
+obligatoria (Lab CUDA y TP Integrador)
+Seguridad — leer antes de
+irse
+Recursos
+← Volver al índice
+CLUSTER
+K3S
+📑 Índice del documento
+Cluster
+K3s con GPU — Infraestructura compartida de la cátedra
+¿Cuándo
+usarlo?
+Requisitos previos
+Instalar
+kubectl
+Linux
+macOS
+Windows (PowerShell)
+Acceso — paso a paso
+Paso 1 — Guardar el
+kubeconfig
+Paso 2 — Activar el
+kubeconfig
+Paso 3 — Verificar la
+conexión
+Paso 4 —
+Verificar que las GPUs están disponibles
+Paso 5 — Pod de
+prueba con
+nvidia-smi
+Comandos esenciales
+Desplegar y gestionar
+Debug
+y monitoreo
+Ver cuotas y namespace
+compartido
+Patrones de uso con GPU
+Patrón
+1 — Job de Kubernetes (lo que pedimos para la entrega)
+Patrón 2 — Pod
+interactivo (debugging)
+Reglas de uso
+(importantes)
+Errores comunes y
+soluciones
+error: You must be logged in to the server (Unauthorized)
+Error: pods "mi-pod" is forbidden: exceeded quota
+Error: container has runAsNonRoot
+Unable to connect to the server: dial tcp... connection refused
+Pod
+queda en
+Pending
+con
+0/N nodes available: insufficient nvidia.com/gpu
+ImagePullBackOff
+El Job termina
+pero los logs salen vacíos
+nvidia-smi: command not found
+adentro del Pod
+Comparación
+obligatoria (Lab CUDA y TP Integrador)
+Seguridad — leer antes de
+irse
+Recursos
+Expandir todo
+Colapsar todo
+Cluster
+K3s con GPU — Infraestructura compartida de la cátedra
+Para qué es este recurso
+: la cátedra mantiene un
+cluster K3s
+con nodos NVIDIA GPU disponible para todos
+los grupos de SD 2026. Es infraestructura
+transversal
+—
+sirve para varios TPs y para el Integrador. Esta página explica cómo
+conectarse, las reglas de uso, y los comandos esenciales para operar
+contra el cluster.
+¿Cuándo usarlo?
+TP / Lab
+Uso del cluster
+TP 3 — Cloud Computing (K8s + RabbitMQ)
+Después de validar contra
+k3s/k3d
+local, escalar al
+cluster compartido para probar Jobs distribuidos reales.
+Práctica IV — Lab CUDA
+Tercer entorno (después de los simuladores GPGPU-Sim y Accel-Sim).
+Permite ejecutar los kernels en una NVIDIA real y comparar métricas
+contra silicio.
+TP Integrador — Blockchain + CUDA
+Despliegue end-to-end del minero CUDA + nodos validadores. Es donde
+se evalúa la entrega final.
+Requisitos previos
+kubectl
+instalado (v1.28+).
+El archivo
+kubeconfig
+que les entregó
+el docente (ej:
+juan.yaml
+). Cada grupo recibe su propio
+kubeconfig con acceso a un namespace específico (
+grupo-a
+,
+grupo-b
+, etc.) y cuotas asignadas.
+El link a la planilla de credenciales no se publica
+acá.
+Se comparte de forma privada por Discord / aula virtual.
+Si no lo recibieron, escriban a la cátedra.
+Instalar kubectl
+Linux
+curl
+-LO
+"https://dl.k8s.io/release/
+$(
+curl
+-sL
+https://dl.k8s.io/release/stable.txt
+)
+/bin/linux/amd64/kubectl"
+chmod
++x kubectl
+&&
+sudo
+mv kubectl /usr/local/bin/
+macOS
+brew
+install kubectl
+Windows (PowerShell)
+winget install Kubernetes
+.
+kubectl
+Acceso — paso a paso
+Paso 1 — Guardar el
+kubeconfig
+mkdir
+-p
+~/.kube
+cp
+juan.yaml ~/.kube/juan.yaml
+chmod
+600 ~/.kube/juan.yaml
+Crean
+~/.kube/
+, mueven el archivo del docente, y
+protegen el permiso (solo el dueño puede leerlo). El
+chmod 600
+es importante: el archivo contiene
+credenciales.
+Paso 2 — Activar el
+kubeconfig
+Opción A — Sesión actual (temporal).
+export
+KUBECONFIG
+=
+~/.kube/juan.yaml
+kubectl
+config current-context
+# Salida esperada: juan@k3s-cluster
+Opción B — Permanente (agregar al
+.bashrc
+/
+.zshrc
+).
+echo
+'export KUBECONFIG=~/.kube/juan.yaml'
+>>
+~/.bashrc
+source
+~/.bashrc
+Diferencia
+: la Opción A solo funciona en esa terminal. La B
+persiste entre sesiones.
+Paso 3 — Verificar la
+conexión
+# Listar pods en su namespace
+kubectl
+get pods
+# Listar todos los recursos
+kubectl
+get all
+# Ver a qué namespace están asignados
+kubectl
+config view
+--minify
+|
+grep
+namespace
+# Salida esperada: namespace: grupo-a
+Importante
+: su acceso está restringido a su
+namespace (
+grupo-a
+o el que les indicó el docente). No van
+a poder ver los namespaces de otros grupos.
+Paso 4 —
+Verificar que las GPUs están disponibles
+kubectl
+get nodes
+-L
+nvidia.com/gpu.product
+kubectl
+describe nodes
+|
+grep
+-A2
+"nvidia.com/gpu"
+Paso 5 — Pod de prueba con
+nvidia-smi
+kubectl
+run gpu-test
+--rm
+-it
+--restart
+=
+Never
+\
+--image
+=
+nvidia/cuda:12.4.0-base-ubuntu22.04
+\
+--overrides
+=
+'{"spec":{"containers":[{"name":"gpu-test","image":"nvidia/cuda:12.4.0-base-ubuntu22.04","command":["nvidia-smi"],"resources":{"limits":{"nvidia.com/gpu":1}}}]}}'
+Si ven la tarjeta listada con su modelo, memoria y driver — están
+adentro.
+Comandos esenciales
+Desplegar y gestionar
+# Aplicar un manifiesto YAML
+kubectl
+apply
+-f
+mi-app.yaml
+# Crear un Pod directamente (sin YAML)
+kubectl
+run mi-pod
+--image
+=
+python:3.12
+--restart
+=
+Never
+# Ver pods con detalles (IPs, nodos)
+kubectl
+get pods
+-o
+wide
+# Descripción detallada de un Pod
+kubectl
+describe pod mi-pod
+# Eliminar un Pod
+kubectl
+delete pod mi-pod
+# Eliminar recursos definidos en un archivo
+kubectl
+delete
+-f
+mi-app.yaml
+Debug y monitoreo
+# Ver logs
+kubectl
+logs mi-pod
+# Logs en tiempo real
+kubectl
+logs mi-pod
+-f
+# Entrar al shell del Pod
+kubectl
+exec
+-it
+mi-pod
+--
+bash
+kubectl
+exec
+-it
+mi-pod
+--
+sh
+# si no hay bash
+# Redirigir puerto local al Pod
+kubectl
+port-forward pod/mi-pod 8080:80
+# Eventos del cluster (orden cronológico)
+kubectl
+get events
+--sort-by
+=
+.lastTimestamp
+# Consumo de recursos en vivo
+kubectl
+top pods
+Ver cuotas y namespace
+compartido
+# Cuánta quota le queda al grupo
+kubectl
+describe resourcequota group-quota
+# Recursos del namespace compartido (servicios de clase)
+kubectl
+get all
+-n
+clase-compartido
+kubectl
+get services
+-n
+clase-compartido
+El namespace
+clase-compartido
+tiene servicios que la
+cátedra deja disponibles para todos los grupos (ej. RabbitMQ común,
+Postgres de demos). Pueden conectarse desde su código pero no modificar
+lo que hay.
+Patrones de uso con GPU
+Patrón 1
+— Job de Kubernetes (lo que pedimos para la entrega)
+Empaquetan su código como imagen Docker, la suben a un registry
+público (Docker Hub, GHCR) o privado (con
+imagePullSecret
+),
+y crean un Job:
+apiVersion
+:
+batch/v1
+kind
+:
+Job
+metadata
+:
+name
+:
+gpu-workload
+spec
+:
+template
+:
+spec
+:
+restartPolicy
+:
+Never
+containers
+:
+-
+name
+:
+app
+image
+:
+<su-registry>/<su-imagen>:<tag>
+command
+:
+[
+"./vector_add"
+]
+resources
+:
+limits
+:
+nvidia.com/gpu
+:
+1
+kubectl
+apply
+-f
+job.yaml
+kubectl
+logs
+-f
+job/gpu-workload
+kubectl
+delete job gpu-workload
+# limpieza al terminar
+Patrón 2 — Pod interactivo
+(debugging)
+Para iterar rápido sin rebuildear la imagen:
+kubectl
+run dev
+--rm
+-it
+--restart
+=
+Never
+\
+--image
+=
+nvidia/cuda:12.4.0-devel-ubuntu22.04
+\
+--overrides
+=
+'{"spec":{"containers":[{"name":"dev","image":"nvidia/cuda:12.4.0-devel-ubuntu22.04","command":["bash"],"stdin":true,"tty":true,"resources":{"limits":{"nvidia.com/gpu":1}}}]}}'
+Adentro tienen
+nvcc
+, librerías, drivers — pueden
+compilar y ejecutar directamente sin hacer push de imagen.
+Reglas de uso (importantes)
+El cluster es un
+recurso compartido
+. Si lo abusan,
+se queda sin recursos para el resto.
+Cuota:
+definida por grupo. Verificar con
+kubectl describe resourcequota group-quota
+. Si llega al
+límite, borrar Pods que no estén en uso.
+Cleanup obligatorio:
+kubectl delete job <nombre>
+y
+kubectl delete pod <nombre>
+al terminar. Pods
+huérfanos se borran automáticamente cada 24 h, pero no abusen.
+Sin batch nocturno:
+no dejar Jobs corriendo durante
+la noche pensando que “total nadie usa”.
+Sin entrenar modelos pesados:
+el cluster es para
+los TPs y el Integrador, no para entrenar redes propias / fine-tunear
+LLMs / minar cripto fuera del TP.
+Imágenes razonables:
+subir imágenes minimal
+(multi-stage build). Imágenes >5 GB demoran el pull y bloquean al
+resto del grupo.
+Reportar problemas:
+si el cluster se cae, un nodo
+no responde, o ven comportamiento raro — avisar en Discord, no abusar de
+retries.
+Errores comunes y soluciones
+error: You must be logged in to the server (Unauthorized)
+Causa:
+el token expiró o el kubeconfig está mal
+copiado.
+Solución:
+pedile al docente que regenere el
+kubeconfig.
+Error: pods "mi-pod" is forbidden: exceeded quota
+Causa:
+la quota del grupo está llena.
+Solución:
+borrar Pods/Jobs que no usen con
+kubectl delete pod mi-pod
+o
+kubectl delete job <nombre>
+.
+Diagnóstico:
+kubectl describe resourcequota group-quota
+muestra qué
+recurso (CPU, memoria, GPU, pod count) llegó al tope.
+Error: container has runAsNonRoot
+Causa:
+la imagen usa root pero la policy del
+cluster lo prohíbe.
+Solución:
+agregar al manifiesto:
+securityContext
+:
+runAsNonRoot
+:
+false
+O mejor, usar una imagen que ya corra como usuario no-root.
+Unable to connect to the server: dial tcp... connection refused
+Causa:
+problema de red.
+Solución:
+verificar conexión a Internet, VPN o LAN
+de la facultad.
+Pod
+queda en
+Pending
+con
+0/N nodes available: insufficient nvidia.com/gpu
+Causa:
+todas las GPUs están ocupadas por otros
+grupos.
+Solución:
+esperar y reintentar, o ejecutar fuera de
+horario pico.
+ImagePullBackOff
+Causa:
+la imagen no existe, el tag está mal, o el
+registry es privado sin
+imagePullSecret
+configurado.
+Solución:
+verificar tag, hacer pública la imagen o
+configurar el secret.
+El Job termina pero
+los logs salen vacíos
+Causa:
+olvidaron redirigir stdout en el
+command
+.
+Solución:
+asegurarse que el binario escriba a
+stdout (no a un archivo dentro del container).
+nvidia-smi: command not found
+adentro del Pod
+Causa:
+usaron una imagen
+*-base
+que no
+incluye las utilidades.
+Solución:
+cambiar a
+nvidia/cuda:<ver>-runtime-<os>
+mínimo, o
+*-devel
+si necesitan compilar.
+Comparación
+obligatoria (Lab CUDA y TP Integrador)
+Cuando entreguen ejercicios que comparen simulación vs. hardware
+real, el informe debe incluir
+3 columnas de métricas del mismo
+kernel
+:
+Métrica
+GPGPU-Sim
+Accel-Sim
+GPU real (cluster K3s)
+Wall-clock total
+sim
+sim
+medido (
+time
+o Nsight)
+Throughput (GFLOPS / GB/s)
+sim
+sim
+medido (
+nvprof
+o Nsight)
+Cache miss rate L1
+sim
+sim
+medido (Nsight Compute)
+Discrepancia vs. GPU real
+calcular %
+calcular %
+baseline (0 %)
+Esto les permite discutir
+la precisión de cada
+simulador
+contra silicio — exactamente la conversación que
+tienen los papers de arquitectura GPU.
+Seguridad — leer antes de
+irse
+⚠️
+El kubeconfig contiene credenciales
+con acceso
+completo a su namespace del cluster.
+No lo compartan con
+nadie
+, no lo suban a GitHub, no lo peguen en chats
+públicos.
+El token tiene una validez de
+1 año
+.
+Si pierden el archivo o creen que alguien lo vio — avisen
+inmediatamente al docente para revocar y regenerar.
+En el repositorio del grupo: agregar
+*.kubeconfig
+,
+*.yaml
+(con cuidado — no todos los YAMLs son secretos) o el
+directorio
+.kube/
+al
+.gitignore
+.
+Recursos
+Kubernetes
+Job documentation
+NVIDIA Device
+Plugin para Kubernetes
+k3s docs
+TP 3 — Práctica III · Parte 0 (bootstrap
+k3s local)
+— prerrequisito conceptual: si todavía no manejaron
+kubectl
+, empezar acá.
+Lab CUDA
+— los simuladores que
+complementan al cluster.
+UNLu · Departamento de Ciencias Básicas · Sistemas Distribuidos y Programación Paralela
+2026
+· Dr. David Petrocelli

@@ -1,0 +1,1306 @@
+Práctica III · Parte 0 — Bootstrap del cluster (k3s / k3d) —
+UNLu DCB
+Universidad Nacional de Luján
+Departamento de Ciencias Básicas
+Sistemas Distribuidos y Programación Paralela
+2026
+Dr. David Petrocelli
+☾
+☀
+Oscuro
+Claro
+☰
+Contenidos
+×
+TP 3 · Parte 0 —
+Bootstrap del cluster
+Instalación
+de k3s y primeros pasos con Kubernetes
+¿Por qué Kubernetes y por
+qué k3s?
+Aviso
+importante: cómo va a vivir este cluster en tu máquina
+Por
+qué este TP exige Kubernetes y no un
+docker-compose
+Requisitos previos
+Camino A —
+Linux nativo o WSL2 (instalación de k3s)
+Paso
+1: Instalar k3s
+Paso 2: Verificar
+que el cluster está vivo
+Paso 3:
+Configurar
+kubectl
+para no necesitar
+sudo
+Paso 4: Cómo
+cargar una imagen Docker en k3s
+Paso 5: Tirar
+abajo k3s cuando termines el TP
+Camino B — macOS o Windows
+(k3d)
+Paso
+1: Instalar k3d
+Paso 2: Crear
+un cluster k3s adentro de Docker
+Paso 3: Verificar el
+cluster
+Paso 4: Cargar una
+imagen Docker en k3d
+Paso 5: Tirar
+abajo el cluster cuando termines
+Comandos
+básicos de kubectl que vas a usar todo el tiempo
+Hello
+world: deployar nginx para validar que todo funciona
+Demo extra: auto-healing
+Demo extra: rolling
+update
+Limpieza
+Conceptos
+mínimos que vas a usar en el TP 3
+Mini-ejemplo:
+cómo se va a ver el Hit #1 (anticipo)
+Troubleshooting frecuente
+“El pod queda en
+Pending
+y no arranca”
+“El pod
+arranca pero falla con
+CrashLoopBackOff
+”
+“Mis workers no se
+conectan a RabbitMQ”
+“kubectl
+no encuentra el cluster
+(
+The connection to the server localhost:8080 was refused
+)”
+“k3s consume mucha RAM”
+Container
+registries — para la Parte 2 (GKE)
+Lectura recomendada y
+referencias
+Documentación oficial
+Libros
+— ordenados de “primer contacto” a “producción/avanzado”
+Papers
+fundacionales — el ADN intelectual de Kubernetes
+Recursos comunitarios
+Glosario —
+términos densos en una línea cada uno
+Validación
+obligatoria previa al TP 3 — Parte 1
+← Volver al índice
+TP
+3 · Parte 0
+📑 Índice del documento
+TP 3 · Parte 0 —
+Bootstrap del cluster
+Instalación
+de k3s y primeros pasos con Kubernetes
+¿Por qué Kubernetes y
+por qué k3s?
+Aviso
+importante: cómo va a vivir este cluster en tu máquina
+Por
+qué este TP exige Kubernetes y no un
+docker-compose
+Requisitos previos
+Camino A
+— Linux nativo o WSL2 (instalación de k3s)
+Paso 1: Instalar k3s
+Paso 2:
+Verificar que el cluster está vivo
+Paso 3:
+Configurar
+kubectl
+para no necesitar
+sudo
+Paso 4: Cómo
+cargar una imagen Docker en k3s
+Paso 5:
+Tirar abajo k3s cuando termines el TP
+Camino B — macOS o Windows
+(k3d)
+Paso 1: Instalar k3d
+Paso 2:
+Crear un cluster k3s adentro de Docker
+Paso 3: Verificar el
+cluster
+Paso 4: Cargar una
+imagen Docker en k3d
+Paso 5:
+Tirar abajo el cluster cuando termines
+Comandos
+básicos de kubectl que vas a usar todo el tiempo
+Hello
+world: deployar nginx para validar que todo funciona
+Demo extra: auto-healing
+Demo extra: rolling
+update
+Limpieza
+Conceptos
+mínimos que vas a usar en el TP 3
+Mini-ejemplo:
+cómo se va a ver el Hit #1 (anticipo)
+Troubleshooting frecuente
+“El pod queda en
+Pending
+y no arranca”
+“El pod
+arranca pero falla con
+CrashLoopBackOff
+”
+“Mis workers no se
+conectan a RabbitMQ”
+“kubectl
+no encuentra el cluster
+(
+The connection to the server localhost:8080 was refused
+)”
+“k3s consume mucha RAM”
+Container
+registries — para la Parte 2 (GKE)
+Lectura recomendada y
+referencias
+Documentación oficial
+Libros
+— ordenados de “primer contacto” a “producción/avanzado”
+Papers
+fundacionales — el ADN intelectual de Kubernetes
+Recursos comunitarios
+Glosario
+— términos densos en una línea cada uno
+Validación
+obligatoria previa al TP 3 — Parte 1
+Expandir todo
+Colapsar todo
+TP 3 · Parte 0 — Bootstrap
+del cluster
+Instalación
+de k3s y primeros pasos con Kubernetes
+Prerrequisito obligatorio del TP 3 — Parte 1 (entrega
+05/05/2026)
+Esta es la
+Parte 0
+del TP 3: el bootstrap del
+cluster que vas a usar en las Partes 1 y 2. Sin haber completado esta
+parte (cluster k3s/k3d funcional + checklist de validación al final), no
+se acepta la entrega del Hit #1 (Sobel distribuido sobre
+Kubernetes).
+¿Por qué Kubernetes y por qué
+k3s?
+Kubernetes (k8s)
+es el orquestador de contenedores
+estándar de la industria. Te permite declarar “quiero 4 réplicas de este
+worker”, “este servicio necesita una IP estable”, “este job tiene que
+reintentarse hasta 3 veces si falla”, y el cluster se encarga.
+k3s
+es una distribución liviana de Kubernetes (~70
+MB de binario) creada por Rancher y donada al CNCF. Es
+Kubernetes real
+(certificado), no una versión
+recortada. Lo eligieron porque es lo más simple de levantar localmente
+sin depender de snap (microk8s) ni de máquinas virtuales (minikube).
+Para este TP vamos a usar k3s en
+dos sabores
+según
+el sistema operativo:
+Tu sistema
+Qué instalás
+Linux nativo o WSL2
+k3s
+(instalación directa)
+macOS o Windows sin WSL
+k3d
+— que es k3s corriendo adentro de Docker
+Los manifiestos YAML son idénticos
+entre ambos. Solo
+cambia cómo levantás el cluster y cómo cargás imágenes Docker.
+Aviso
+importante: cómo va a vivir este cluster en tu máquina
+Lo que vamos a montar acá es la forma
+más simple
+posible
+de tener Kubernetes corriendo. Es perfecto para
+aprender, pero tiene implicaciones que conviene entender
+antes
+de empezar:
+Tu máquina cumple los dos roles a la vez:
+Control plane
+— el cerebro del cluster: API server,
+scheduler, controllers, etcd. Es el que recibe tus
+kubectl apply
+, decide dónde corre cada pod, y mantiene el
+“estado deseado” del sistema.
+Worker node
+— donde efectivamente corren los
+containers de tus pods.
+En un cluster de producción estos roles están
+separados
+en máquinas distintas, con varios nodos cada
+uno, para tener tolerancia a fallos y poder escalar. Acá los junta uno
+solo: tu laptop.
+El cluster se muere si apagás la máquina.
+k3s
+queda registrado como servicio
+systemd
+y arranca solo al
+boot, pero si suspendés el equipo, hibernás, o reiniciás bruscamente,
+los pods se pierden hasta que vuelva el servicio.
+Esto NO es una
+limitación de Kubernetes
+— es la limitación de correrlo sobre
+un solo nodo, en tu máquina, sin alta disponibilidad. En la
+Parte 2
+del TP 3 lo van a desplegar en GKE (multi-nodo,
+alta disponibilidad real).
+No es producción, pero es Kubernetes real.
+Los
+manifiestos que vas a escribir (
+Deployment
+,
+Service
+,
+ConfigMap
+,
+Secret
+,
+Job
+) son
+idénticos
+a los que usarías en
+GKE / EKS / AKS. La única diferencia es que en producción ese mismo
+kubectl apply -f
+lo recibe un cluster distribuido y
+replicado, en lugar de tu notebook.
+Por qué
+este TP exige Kubernetes y no un
+docker-compose
+El objetivo no es “que el Sobel distribuido corra en algún lado”. Es
+que empiecen a
+pensar en términos de Kubernetes
+, que es
+donde la industria está parada hoy. Eso significa entender la diferencia
+entre:
+Mundo Docker / docker-compose
+Mundo Kubernetes
+docker run
+Pod
+(la unidad mínima — uno o varios containers que
+comparten red y storage)
+restart: always
+en compose
+Deployment
+(mantiene N réplicas vivas, hace rolling
+updates)
+docker run --rm worker
+Job
+(one-off batch que corre hasta completarse)
+cron
+en el host disparando
+docker run
+CronJob
+(cron nativo del cluster)
+volumes:
+en compose
+PersistentVolumeClaim
+(PVC) — almacenamiento
+desacoplado del nodo
+Archivo
+.env
+montado
+ConfigMap
+(configuración) +
+Secret
+(datos
+sensibles)
+ports:
+en compose
+Service
+(IP/DNS estable sobre pods que pueden morir y
+revivir)
+Escalar manualmente con
+--scale
+kubectl scale
++
+HorizontalPodAutoscaler
+docker network
+Namespace
++ políticas de red
+Cuando en el
+Hit #1
+del TP 3 conviertan el
+docker run
+del worker Sobel en un
+Deployment
++
+Service
++
+ConfigMap
++ RabbitMQ como queue
+compartida,
+ese ejercicio mental es el verdadero aprendizaje del
+TP
+— más que los YAMLs en sí. Pasar de “tengo un Dockerfile y
+un compose” a “tengo manifiestos declarativos que cualquier cluster
+Kubernetes puede ejecutar y escalar a N réplicas” es el salto
+profesional que se les pide.
+Requisitos previos
+Tener
+Docker
+instalado y funcionando (lo necesitan
+para construir las imágenes igual).
+Verificá con:
+docker version
+y
+docker ps
+.
+Tener
+kubectl
+instalado (CLI oficial de
+Kubernetes).
+macOS:
+brew install kubectl
+Linux:
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+Windows:
+choco install kubernetes-cli
+o
+scoop install kubectl
+Verificá:
+kubectl version --client
+4 GB de RAM libres. 2 GB de disco libres.
+Camino A —
+Linux nativo o WSL2 (instalación de k3s)
+Paso 1: Instalar k3s
+curl
+-sfL
+https://get.k3s.io
+|
+sh
+-
+Esto te baja el binario, lo deja en
+/usr/local/bin/k3s
+,
+lo registra como servicio
+systemd
+, y lo arranca. Duración:
+~30 segundos.
+Paso 2: Verificar que
+el cluster está vivo
+sudo
+k3s kubectl get nodes
+Tenés que ver algo así:
+NAME            STATUS   ROLES                  AGE   VERSION
+mi-laptop       Ready    control-plane,master   12s   v1.32.x+k3s1
+Paso 3:
+Configurar
+kubectl
+para no necesitar
+sudo
+k3s deja el kubeconfig en
+/etc/rancher/k3s/k3s.yaml
+con
+permisos restrictivos. Para usar
+kubectl
+sin
+sudo
+:
+mkdir
+-p
+~/.kube
+sudo
+cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo
+chown
+$(
+id
+-u
+)
+:
+$(
+id
+-g
+)
+~/.kube/config
+chmod
+600 ~/.kube/config
+Verificá:
+kubectl
+get nodes
+Si te devuelve el nodo sin pedir
+sudo
+, ya está.
+Paso 4: Cómo cargar
+una imagen Docker en k3s
+k3s no usa Docker como runtime — usa
+containerd
+. Por
+eso, una imagen que construiste con
+docker build
+no la “ve”
+k3s automáticamente. Hay que importarla:
+docker
+save mi-imagen:latest
+-o
+mi-imagen.tar
+sudo
+k3s ctr images import mi-imagen.tar
+rm
+mi-imagen.tar
+Para verificar que la imagen está cargada:
+sudo
+k3s ctr images list
+|
+grep
+mi-imagen
+Paso 5: Tirar
+abajo k3s cuando termines el TP
+sudo
+/usr/local/bin/k3s-uninstall.sh
+Limpia todo: binario, servicio systemd, datos del cluster, redes.
+Limpio.
+Camino B — macOS o Windows
+(k3d)
+Paso 1: Instalar k3d
+macOS:
+brew
+install k3d
+Windows (con Chocolatey):
+choco install k3d
+Windows (con Scoop):
+scoop install k3d
+Verificá:
+k3d
+version
+Paso 2: Crear un
+cluster k3s adentro de Docker
+k3d
+cluster create sobel
+Esto levanta:
+Un container Docker llamado
+k3d-sobel-server-0
+corriendo k3s.
+Te configura
+~/.kube/config
+automáticamente para
+apuntar a este cluster.
+Duración: ~30 segundos.
+Paso 3: Verificar el cluster
+kubectl
+get nodes
+Debería mostrar
+k3d-sobel-server-0
+en estado
+Ready
+.
+Paso 4: Cargar una
+imagen Docker en k3d
+docker
+build
+-t
+mi-imagen:latest .
+k3d
+image import mi-imagen:latest
+-c
+sobel
+k3d image import
+se encarga de empaquetar la imagen y
+enviarla al cluster. Mucho más cómodo que el flujo de k3s nativo.
+Paso 5: Tirar
+abajo el cluster cuando termines
+k3d
+cluster delete sobel
+Comandos
+básicos de kubectl que vas a usar todo el tiempo
+Comando
+Qué hace
+kubectl get nodes
+Lista los nodos del cluster
+kubectl get pods
+Lista los pods en el namespace actual
+kubectl get pods -A
+Lista los pods de TODOS los namespaces
+kubectl get deploy
+Lista los Deployments
+kubectl get svc
+Lista los Services
+kubectl describe pod <nombre>
+Detalles + eventos de un pod (útil cuando algo no arranca)
+kubectl logs <pod>
+Logs del pod
+kubectl logs -f <pod>
+Logs en streaming
+kubectl logs -l app=worker
+Logs de todos los pods con el label
+app=worker
+kubectl apply -f archivo.yaml
+Crea/actualiza recursos del archivo
+kubectl delete -f archivo.yaml
+Borra los recursos del archivo
+kubectl scale deploy/worker --replicas=5
+Escala un Deployment
+kubectl exec -it <pod> -- /bin/sh
+Te abre un shell adentro del pod
+kubectl port-forward svc/rabbitmq 15672:15672
+Expone un Service en tu localhost
+kubectl get events --sort-by='.lastTimestamp'
+Eventos del cluster ordenados por fecha (golden para debug)
+Hello
+world: deployar nginx para validar que todo funciona
+Creá un archivo
+nginx-test.yaml
+:
+apiVersion
+:
+apps/v1
+kind
+:
+Deployment
+metadata
+:
+name
+:
+nginx-test
+spec
+:
+replicas
+:
+2
+selector
+:
+matchLabels
+:
+{
+app
+:
+nginx-test
+}
+template
+:
+metadata
+:
+labels
+:
+{
+app
+:
+nginx-test
+}
+spec
+:
+containers
+:
+-
+name
+:
+nginx
+image
+:
+nginx:alpine
+ports
+:
+-
+containerPort
+:
+80
+---
+apiVersion
+:
+v1
+kind
+:
+Service
+metadata
+:
+name
+:
+nginx-test
+spec
+:
+selector
+:
+{
+app
+:
+nginx-test
+}
+ports
+:
+-
+port
+:
+80
+targetPort
+:
+80
+type
+:
+ClusterIP
+Aplicalo:
+kubectl
+apply
+-f
+nginx-test.yaml
+Esperá a que estén corriendo:
+kubectl
+get pods
+-l
+app=nginx-test
+--watch
+# salí con Ctrl+C cuando los 2 pods estén Running
+Hacé port-forward al Service (no al pod — así pueden ver el
+balanceo):
+kubectl
+port-forward svc/nginx-test 8080:80
+En otra terminal:
+curl
+http://localhost:8080
+Tenés que ver el HTML de bienvenida de nginx. Si lo ves,
+felicitaciones — tu cluster funciona y ya estás haciendo
+balanceo entre 2 réplicas
+.
+Demo extra: auto-healing
+Matá uno de los pods y mirá cómo k8s lo recrea solo:
+kubectl
+get pods
+-l
+app=nginx-test
+kubectl
+delete pod
+<
+nombre-de-uno-de-los-pods
+>
+kubectl
+get pods
+-l
+app=nginx-test
+--watch
+El
+Deployment
+mantiene el “estado deseado” (2 réplicas).
+Si matás uno, levanta otro.
+Esto es lo que reemplaza al
+restart: always
+de docker-compose, pero a nivel
+cluster.
+Demo extra: rolling update
+kubectl
+set image deployment/nginx-test nginx=nginx:1.25-alpine
+kubectl
+rollout status deployment/nginx-test
+Cambia la versión sin downtime — k8s va matando los pods viejos uno
+por uno mientras levanta los nuevos.
+Limpieza
+kubectl
+delete
+-f
+nginx-test.yaml
+Conceptos mínimos
+que vas a usar en el TP 3
+Concepto
+Para qué sirve en el TP 3
+Pod
+La unidad mínima — uno o más containers que comparten red y
+storage
+Deployment
+Mantiene N réplicas vivas.
+Es lo que vas a usar para los
+workers Sobel
+(Hit #1)
+Service
+IP/DNS estable adentro del cluster.
+Lo usás para que los
+workers encuentren a RabbitMQ
+sin importar en qué nodo
+esté
+ConfigMap
+Configuración no-secreta inyectada como env vars o archivos (ej:
+RABBIT_HOST
+,
+QUEUE_NAME
+,
+WORKER_PARALLELISM
+)
+Secret
+Lo mismo pero para datos sensibles (passwords de RabbitMQ,
+tokens)
+Job
+Tarea one-off que corre hasta completarse (útil para el productor
+que despacha el batch de imágenes)
+Namespace
+Carpeta lógica del cluster — usen
+default
+o creen
+sobel
+para aislar
+No hace falta entender todo de Kubernetes. Para el Hit #1 alcanza con
+saber qué hace cada uno de estos 7.
+Mini-ejemplo:
+cómo se va a ver el Hit #1 (anticipo)
+Para que vean el destino, así de simple es desplegar un worker pool
+replicado conectado a RabbitMQ en Kubernetes:
+# rabbitmq.yaml — el broker (1 réplica, persistente)
+apiVersion
+:
+apps/v1
+kind
+:
+Deployment
+metadata
+:
+name
+:
+rabbitmq
+spec
+:
+replicas
+:
+1
+selector
+:
+{
+matchLabels
+:
+{
+app
+:
+rabbitmq
+}
+}
+template
+:
+metadata
+:
+{
+labels
+:
+{
+app
+:
+rabbitmq
+}
+}
+spec
+:
+containers
+:
+-
+name
+:
+rabbitmq
+image
+:
+rabbitmq:3-management
+ports
+:
+-
+containerPort
+:
+5672
+# AMQP
+-
+containerPort
+:
+15672
+# UI
+---
+apiVersion
+:
+v1
+kind
+:
+Service
+metadata
+:
+{
+name
+:
+rabbitmq
+}
+spec
+:
+selector
+:
+{
+app
+:
+rabbitmq
+}
+ports
+:
+-
+{
+name
+:
+amqp
+,
+port
+:
+5672
+,
+targetPort
+:
+5672
+}
+-
+{
+name
+:
+admin
+,
+port
+:
+15672
+,
+targetPort
+:
+15672
+}
+# workers.yaml — N réplicas del worker Sobel
+apiVersion
+:
+apps/v1
+kind
+:
+Deployment
+metadata
+:
+name
+:
+sobel-worker
+spec
+:
+replicas
+:
+3
+# ← acá está la magia distribuida
+selector
+:
+{
+matchLabels
+:
+{
+app
+:
+sobel-worker
+}
+}
+template
+:
+metadata
+:
+{
+labels
+:
+{
+app
+:
+sobel-worker
+}
+}
+spec
+:
+containers
+:
+-
+name
+:
+worker
+image
+:
+mi-usuario/sobel-worker:latest
+env
+:
+-
+name
+:
+RABBIT_HOST
+value
+:
+"rabbitmq"
+# ← DNS interno del cluster, apunta al Service
+-
+name
+:
+QUEUE_NAME
+value
+:
+"image-jobs"
+kubectl
+apply
+-f
+rabbitmq.yaml
+-f
+workers.yaml
+# ¿Carga alta? Escalo a 10 workers en caliente:
+kubectl
+scale deploy/sobel-worker
+--replicas
+=
+10
+kubectl
+get pods
+-l
+app=sobel-worker
+Eso es todo lo que cambia entre “lo corro a mano” y “tengo un
+sistema distribuido escalable”.
+En la Parte 2 del TP 3, ese
+mismo
+kubectl apply
+se ejecuta sobre GKE en lugar de tu
+laptop, con autoscaling real.
+Troubleshooting frecuente
+“El pod queda en
+Pending
+y no arranca”
+Casi siempre es porque la imagen no está disponible. En k3s tenés que
+importar la imagen con
+sudo k3s ctr images import
+. En k3d
+con
+k3d image import
+. Después en el manifiesto del pod usá
+imagePullPolicy: IfNotPresent
+para que no intente bajarla
+de Docker Hub.
+kubectl
+describe pod
+<
+nombre
+>
+# leé la sección "Events" — ahí dice qué está fallando
+“El pod arranca
+pero falla con
+CrashLoopBackOff
+”
+Es un error del proceso adentro del container. Mirá los logs:
+kubectl
+logs
+<
+pod
+>
+kubectl
+logs
+<
+pod
+>
+--previous
+# logs de la corrida anterior si ya reinició
+“Mis workers no se
+conectan a RabbitMQ”
+99% de las veces es porque pusieron
+localhost
+o la IP
+del host como
+RABBIT_HOST
+. Adentro del cluster, la URL del
+broker es
+el nombre del Service
+(
+rabbitmq
+en el ejemplo). El DNS interno de Kubernetes resuelve eso.
+kubectl
+exec
+-it
+deploy/sobel-worker
+--
+nslookup rabbitmq
+# tiene que devolver una IP del rango ClusterIP
+“kubectl
+no encuentra el cluster
+(
+The connection to the server localhost:8080 was refused
+)”
+Tu
+~/.kube/config
+no apunta al cluster correcto. En k3s
+seguí el Paso 3 del Camino A. En k3d corré
+k3d kubeconfig merge sobel --kubeconfig-switch-context
+.
+“k3s consume mucha RAM”
+k3s idle anda en ~400-500 MB. Si tenés problemas, asegurate de no
+tener microk8s, minikube ni Docker Desktop con su Kubernetes activo en
+paralelo.
+Container registries
+— para la Parte 2 (GKE)
+En la Parte 1 podés usar
+k3s ctr import
+/
+k3d image import
+para cargar imágenes locales. Pero para la
+Parte 2 (GKE)
+vas a necesitar publicar las imágenes en
+un registry público o privado.
+Registry
+Tipo
+Cuándo se elige
+Free tier para públicas
+GitHub Container Registry
+(
+ghcr.io
+)
+Cloud, integrado con GitHub
+Stack basado en GitHub Actions, ergonomía top
+✅ ilimitado
+Docker Hub
+(
+docker.io
+)
+Cloud, el original
+Imágenes oficiales
+⚠️ rate limit 100/6h anónimo, 200/6h
+auth — se siente en CI
+Google Artifact Registry
+Cloud, GCP-native
+Recomendado para Parte 2 (GKE)
+— IAM-based auth,
+latencia mínima a GKE
+❌ pago (módico)
+Amazon ECR
+Cloud, AWS-native
+EKS / ECS / Fargate
+❌ pago
+Harbor
+Self-hosted, OSS (CNCF graduated)
+El estándar on-prem corporativo
+N/A — vos lo hosteás
+Para este TP
+: usen
+ghcr.io
+en Parte 1
+(gratis, sin rate limit) y migren a
+Google Artifact
+Registry
+en Parte 2 si quieren explotar la integración con
+GKE.
+Lectura recomendada y
+referencias
+No es lectura obligatoria, pero si van en serio con esto, las
+primeras 4-5 referencias les van a ahorrar meses.
+Documentación oficial
+Kubernetes
+—
+https://kubernetes.io/
+Conceptos
+—
+https://kubernetes.io/docs/concepts/
+(Pod, Deployment, Service, Job, ConfigMap, PVC explicados por la
+fuente)
+API Reference
+—
+https://kubernetes.io/docs/reference/kubernetes-api/
+kubectl cheatsheet
+—
+https://kubernetes.io/docs/reference/kubectl/quick-reference/
+k3s docs
+—
+https://docs.k3s.io/
+k3d docs
+—
+https://k3d.io/
+CNCF Landscape
+—
+https://landscape.cncf.io/
+Libros —
+ordenados de “primer contacto” a “producción/avanzado”
+Libro
+Autores
+Editorial / Año
+Cuándo leerlo
+The
+Kubernetes Book (3rd ed)
+Nigel Poulton, Pushkar Joglekar
+O’Reilly · 2024
+Primer contacto, lectura de fin de semana
+Kubernetes:
+Up and Running (3rd ed)
+Brendan Burns, Joe Beda, Kelsey Hightower, Lachlan Evenson
+O’Reilly · 2022
+Intro canónica — escrita por quienes diseñaron k8s
+Kubernetes
+in Action (2nd ed)
+Marko Lukša, Kevin Conner
+Manning · 2026
+El
+best of class
+para deep-dive. ⭐
+Kubernetes
+Patterns (2nd ed)
+Bilgin Ibryam, Roland Huß
+O’Reilly · 2023
+Patterns reutilizables. Cap. 3 (Predictable Demands) y Cap. 6
+(Stateless Service) son
+directamente
+Hit #1
+Kubernetes
+Best Practices (2nd ed)
+Brendan Burns et al
+O’Reilly · 2024
+Operación en producción: RBAC, observabilidad, GitOps
+Cloud
+Native Patterns
+Cornelia Davis
+Manning · 2019
+Patrones cloud-native independientes de k8s
+GitOps
+and Kubernetes
+Yuen, Matyushentsev, Ekenstam, Suen
+Manning · 2021
+Para Argo CD / Flux
+Papers
+fundacionales — el ADN intelectual de Kubernetes
+Los conceptos de Deployment, Service, scheduling, autoscaling no
+salieron de la nada — vienen de 15 años de operación a escala en Google
+con sus sistemas Borg y Omega. Estos 4 papers son
+lectura
+obligatoria conceptual
+:
+Burns, Grant, Oppenheimer, Brewer, Wilkes
+(2016).
+“Borg, Omega, and Kubernetes: Lessons learned from
+three container-management systems over a decade”.
+ACM Queue /
+CACM
+. —
+https://queue.acm.org/detail.cfm?id=2898444
+El paper que conecta los puntos: por qué Kubernetes es como es.
+Léanlo aunque sea uno solo.
+Verma, Pedrosa, Korupolu, Oppenheimer, Tune, Wilkes
+(2015).
+“Large-scale cluster management at Google with Borg”.
+EuroSys 2015
+. —
+https://research.google.com/pubs/archive/43438.pdf
+Schwarzkopf, Konwinski, Abd-El-Malek, Wilkes
+(2013).
+“Omega: flexible, scalable schedulers for large compute
+clusters”.
+EuroSys 2013
+. —
+https://research.google/pubs/omega-flexible-scalable-schedulers-for-large-compute-clusters/
+Tirmazi et al (2020).
+“Borg: the Next
+Generation”.
+EuroSys 2020
+. —
+https://dl.acm.org/doi/10.1145/3342195.3387517
+Recursos comunitarios
+Kubernetes the Hard Way
+— Kelsey Hightower —
+https://github.com/kelsey-hightower/kubernetes-the-hard-way
+Awesome Kubernetes
+—
+https://github.com/ramitsurana/awesome-kubernetes
+CNCF YouTube
+—
+https://www.youtube.com/@cncf
+Learnk8s blog
+—
+https://learnk8s.io/blog
+Killercoda
+—
+https://killercoda.com/playgrounds/scenario/kubernetes
+(sandbox interactivo en el navegador)
+Glosario —
+términos densos en una línea cada uno
+Pod
+: unidad mínima desplegable en k8s — uno o más
+containers que comparten red y storage.
+Deployment
+: controlador que mantiene N réplicas de
+un pod; soporta rolling updates y rollback.
+Service
+: abstracción de red estable (IP + DNS
+interno) sobre un conjunto de pods seleccionados por labels.
+Ingress
+: regla HTTP/HTTPS que enruta tráfico
+externo a Services internos (en k3s viene Traefik por default).
+Job vs CronJob
+: Job corre una tarea hasta
+completarse; CronJob lanza Jobs según cron.
+ConfigMap
+: configuración no-secreta inyectada como
+env vars o archivos.
+Secret
+: como ConfigMap pero para datos sensibles,
+con base64 y RBAC más estricto.
+PVC — PersistentVolumeClaim
+: pedido de
+almacenamiento persistente que sobrevive a reinicios del pod.
+StatefulSet
+: controlador para apps con identidad
+estable (DBs, brokers) — pods con nombre fijo y storage propio.
+Namespace
+: carpeta lógica del cluster para aislar
+recursos.
+Label / Selector
+: par clave-valor en metadata; los
+Services y Deployments usan selectores para encontrar sus pods.
+kubeconfig
+: archivo (
+~/.kube/config
+)
+que dice a kubectl a qué cluster apuntar y con qué credenciales.
+containerd
+: runtime de containers que usa k3s (NO
+Docker). Por eso hay que importar imágenes con
+k3s ctr
+.
+HorizontalPodAutoscaler (HPA)
+: escala réplicas
+automáticamente según CPU/memoria/métricas custom.
+Image registry
+: servidor que almacena imágenes
+Docker/OCI versionadas (ghcr.io, ECR, GAR).
+Image pull secret
+: Secret de tipo
+kubernetes.io/dockerconfigjson
+para que el cluster pueda
+hacer pull de un registry privado.
+Workload Identity / OIDC
+: federación de identidad
+cluster ↔︎ cloud sin keys estáticas (estándar 2026 para auth contra
+GCP/AWS).
+Sigstore / cosign
+: firma criptográfica de imágenes
+para supply chain security (SLSA L3).
+Validación
+obligatoria previa al TP 3 — Parte 1
+Para que la entrega del Hit #1 sea aceptada, tienen que poder
+responder afirmativamente a las 5 preguntas.
+Documenten en el
+README del Hit #1 (sección “Prerrequisitos cumplidos”) la evidencia de
+cada checkpoint
+(output del comando o screenshot).
+kubectl get nodes
+me
+devuelve un nodo en
+Ready
+.
+Pude correr el
+nginx-test
+con
+replicas: 2
+y abrirlo con
+curl localhost:8080
+.
+Pude matar un pod y ver cómo el
+Deployment lo recrea automáticamente.
+Sé importar una imagen Docker al
+cluster (
+k3s ctr images import
+/
+k3d image import
+).
+Entiendo qué es un Pod, un
+Deployment, un Service, un ConfigMap y un Secret (al menos a nivel “para
+qué sirve”).
+Si las 5 son sí, están listos para el Hit #1.
+UNLu · Departamento de Ciencias Básicas · Sistemas Distribuidos y Programación Paralela
+2026
+· Dr. David Petrocelli
