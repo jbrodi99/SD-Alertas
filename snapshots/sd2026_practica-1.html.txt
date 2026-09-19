@@ -58,7 +58,7 @@ Trabajo Práctico Nº 1
 Conceptos
 básicos para la construcción de Sistemas Distribuidos
 Fecha de entrega:
-17/03/2026
+04/09/2026
 Requisitos,
 consideraciones y formato de entrega
 Integrar herramientas de IA en su ciclo de vida de

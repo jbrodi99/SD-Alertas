@@ -59,7 +59,7 @@ Trabajo Práctico Nº 3 — Parte
 Computación
 Distribuida (Kubernetes / RabbitMQ)
 Fecha de entrega:
-05/05/2026 — todos los puntos.
+23/10/2026 — todos los puntos.
 Requisitos,
 consideraciones y formato de entrega
 Integrar herramientas de IA en su ciclo de vida de

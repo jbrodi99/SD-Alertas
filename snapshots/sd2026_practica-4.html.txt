@@ -77,7 +77,7 @@ Trabajo Práctico Nº 4
 Programación Paralela
 (Shaders)
 Fecha de entrega:
-15/05/2026
+06/11/2026
 Requisitos,
 consideraciones y formato de entrega
 Integrar herramientas de IA en su ciclo de vida de

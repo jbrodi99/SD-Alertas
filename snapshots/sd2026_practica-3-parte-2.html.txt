@@ -67,7 +67,7 @@ Trabajo Práctico Nº 3 — Parte
 Computación en la
 Nube (Kubernetes / RabbitMQ)
 Fecha de entrega:
-20/05/2026 — todos los puntos.
+23/10/2026 — todos los puntos.
 Continuidad con la Parte 1.
 Esta entrega asume los
 ejercicios del Hit #0 (patrones de mensajería [RMQ]) y el Hit #1 (Sobel

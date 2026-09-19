@@ -48,7 +48,7 @@ SD y Concurrencia
 Cliente/servidor con tareas en Docker, pool de workers con exclusión mutua,
 y algoritmo de elección de líder (Bully).
 Entrega:
-25/09/2026
+05/10/2026
 → Ver TP
 Práctica III — Cloud Computing
 Computación distribuida con Kubernetes y RabbitMQ. La

@@ -138,7 +138,7 @@ Trabajo Práctico Integrador
 Blockchain Distribuida y
 CUDA
 Fecha de entrega:
-23/06/2026
+04/12/2026
 Requisitos,
 consideraciones y formato de entrega
 Integrar herramientas de IA en su ciclo de vida de

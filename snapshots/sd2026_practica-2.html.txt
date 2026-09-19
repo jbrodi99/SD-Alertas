@@ -54,7 +54,7 @@ Trabajo Práctico Nº 2
 Sistemas Distribuidos y
 Concurrencia
 Fecha de entrega:
-31/03/2026
+05/10/2026
 Requisitos,
 consideraciones y formato de entrega
 Integrar herramientas de IA en su ciclo de vida de

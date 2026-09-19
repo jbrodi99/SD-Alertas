@@ -183,7 +183,7 @@ del cluster
 Instalación
 de k3s y primeros pasos con Kubernetes
 Prerrequisito obligatorio del TP 3 — Parte 1 (entrega
-05/05/2026)
+23/10/2026)
 Esta es la
 Parte 0
 del TP 3: el bootstrap del
