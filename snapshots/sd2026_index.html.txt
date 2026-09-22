@@ -59,10 +59,19 @@ TP 3 · PARTE 0
 Bootstrap del cluster (k3s / k3d)
 Prerrequisito: levantar un cluster Kubernetes local en 30 segundos (k3s en Linux/WSL,
 k3d en Mac/Windows), comandos básicos de kubectl, hello world con Deployment + Service,
-y mini-anticipo del Hit #1.
+y mini-anticipo del Hit #1. Es la guía de lectura; la práctica evaluable es el
+lab interactivo de al lado.
 Antes de:
 23/10/2026
 → Ver guía
+TP 3 · PARTE 0 · LAB
+Lab interactivo: k3s desde cero
+La Parte 0, para hacerla en vez de leerla: ejecutás cada comando en tu máquina,
+ves la salida real, y no avanzás sin responder bien. Al terminar con 90% de
+aciertos a la primera te da el código de entrega que necesitás para la misión.
+Antes de:
+23/10/2026
+→ Hacer el lab
 TP 3 · PARTE 1
 Patrones de mensajería + Sobel distribuido
 Hit #0 — patrones con RabbitMQ (Message Queue, Pub/Sub, DLQ, Retry).
